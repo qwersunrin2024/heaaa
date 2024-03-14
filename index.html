@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" integrity="sha384-dpuaG1suU0eT09tx5plTaGMLBsfDLzUCCUXOY2j/LSvXYuG6Bqs43ALlhIqAJVRb" crossorigin="anonymous">
+<title>영어 단어 저장</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    
+    margin: 0;
+  }
+  
+  .container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  label {
+    font-weight: bold;
+  }
+  
+  input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>영어 단어 저장하기</h1>
+
+  <div class="form-group">
+    <label for="word">영어 단어:</label>
+    <input type="text" id="word">
+  </div>
+  <div class="form-group">
+    <label for="meaning">뜻:</label>
+    <input type="text" id="meaning">
+  </div>
+  <button onclick="saveWord()">저장</button>
+
+  <h2>저장된 단어 목록</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>영어 단어</th>
+        <th>뜻</th>
+      </tr>
+    </thead>
+    <tbody id="savedWords">
+      <!-- 저장된 단어들이 여기에 표시될 것입니다. -->
+    </tbody>
+  </table>
+</div>
+
+<script>
+  var words = [
+        { word: "apple", meaning: "사과" },
+        { word: "banana", meaning: "바나나" },
+        { word: "cat", meaning: "고양이" },
+        // 기타 등등 원하는 단어를 추가할 수 있습니다.
+    ];
+// 저장된 단어들을 보관할 배열
+var words = [];
+var meanings = [];
+// 저장 버튼 클릭 시 호출되는 함수
+function saveWord() {
+  var wordInput = document.getElementById('word');
+  var meaningInput = document.getElementById('meaning');
+  var word = wordInput.value;
+  var meaning = meaningInput.value;
+  
+  // 입력된 단어와 뜻을 저장
+  words.push({word: word, meaning: meaning});
+  localStorage.setItem('words', JSON.stringify(words));
+  localStorage.setItem('meanings',JSON.stringify(meanings));
+  // 저장된 단어들을 화면에 업데이트
+  displayWords();
+  
+  // 입력 필드 초기화
+  wordInput.value = '';
+  meaningInput.value = '';
+
+updateURL();
+}
+// URL에 저장된 단어들을 추가하는 함수
+function updateURL() {
+  var params = [];
+  words.forEach(function(item) {
+    params.push(encodeURIComponent(item.word) + '=' + encodeURIComponent(item.meaning));
+  });
+  var queryString = params.join('&');
+  var newURL = window.location.origin + window.location.pathname + '?' + queryString;
+  history.pushState(null, '', newURL);
+}
+
+// 페이지 로드 시 URL에서 저장된 단어들 불러오기
+window.onload = function() {
+  var urlParams = new URLSearchParams(window.location.search);
+  urlParams.forEach(function(value, key) {
+    words.push({word: decodeURIComponent(key), meaning: decodeURIComponent(value)});
+  });
+  displayWords();
+
+};
+// 저장된 단어들을 화면에 표시하는 함수
+function displayWords() {
+  var savedWordsTable = document.getElementById('savedWords');
+  savedWordsTable.innerHTML = '';
+  
+  words.forEach(function(item) {
+    var row = savedWordsTable.insertRow();
+    var wordCell = row.insertCell(0);
+    var meaningCell = row.insertCell(1);
+    wordCell.textContent = item.word;
+    meaningCell.textContent = item.meaning;
+  });
+}
+</script>
+<body>
+  
+  
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <a class="navbar-brand">메뉴</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-link active" aria-current="page" href="http://localhost:8080/sec">영단어등록</a>
+            <a class="nav-link" aria-current="page" href="http://localhost:8080/teampl">외우러가기</a>
+            <a class="nav-link" href="http://localhost:8080">돌아가기</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+ 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  
+
+</body>
+
+
+</body>
+</html>
